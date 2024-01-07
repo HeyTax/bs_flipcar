@@ -82,14 +82,21 @@ function DrawText3D(x, y, z, text)
 end
 
 Citizen.CreateThread(function()
-	local playerPed = GetPlayerPed(-1)
+    local waitTime = 1000
     while true do
-        Citizen.Wait(0)
-        displayText()
+        local playerPed = GetPlayerPed(-1)
+        if flippedCar then
+            waitTime = 1
+            displayText()
 
-        if IsControlJustReleased(0, 38) and flippedCar ~= nil and not IsPedRagdoll(playerPed) then -- 'E' key
-            flipCar()
+            if IsControlJustReleased(0, 38) and not IsPedRagdoll(playerPed) then -- 'E' key
+                flipCar()
+            end
+
+        else
+            waitTime = 1000
         end
+        Wait (waitTime)
     end
 end)
 
@@ -97,5 +104,7 @@ if Config.DebugCar then
 	prnt("Replacing car rot")
 	local playerPed = GetPlayerPed(-1)
 	VehicleData = GetClosestVehicle(GetEntityCoords(playerPed), 5.0, 0, 70)
-	SetEntityRotation(VehicleData, GetEntityCoords(VehicleData).x - 90, 0, 0, 2, true)
+    if DoesEntityExist(VehicleData) then
+        SetEntityRotation(VehicleData, GetEntityCoords(VehicleData).x - 90, 0, 0, 2, true)
+    end
 end
